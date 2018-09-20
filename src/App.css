@@ -1,28 +1,115 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css');
+
+body {
+	margin: 0px;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 0.9rem;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+button, textarea {
+	outline: none;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+main {
+	background-color: rgb(245, 245, 245);
+	height: calc(100vh - 2em);
+	margin: 0 4em;
+	padding: 1em;
+	box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: flex-start;
 }
 
-.App-title {
-  font-size: 1.5em;
+.kanban-column {
+	display: flex;
+	flex-direction:column;
+	justify-content: space-between;
+	background-color: rgba(238, 238, 238);
+	padding: 0.5em;
+	height: auto;
+	width: 20em;
+	border-radius: 3px;
+	margin: 0 0.4em;
+	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
-.App-intro {
-  font-size: large;
+.kanban-column > header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-weight: bold;
+	margin-bottom: 1em;	
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.kanban-btn-column-options {
+	outline: none;
+	cursor: pointer;
+	background-color: rgb(238, 238, 238);
+	border: none;
+	width: 2em;
+	height: 2em;
+	font-size: 1rem;
+	font-weight: bold;
+	transition: 0.2s;
+}
+
+.kanban-btn-column-options:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);	
+}
+
+.kanban-btn-add-card {
+	height: 2em;
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.kanban-btn-add-card:before, .kanban-btn-add-column:before {
+	content: '\f067';
+	font-family: 'FontAwesome';
+	margin-right: 0.5em;
+}
+
+.kanban-btn-add-card:hover, .kanban-btn-add-column:hover {
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);	
+}
+
+.kanban-card {
+	background-color: rgb(243, 243, 243);
+	padding: 0.5em;
+	margin-bottom: 0.5em;
+	box-shadow: 0px 1px 1px rgb(200, 200, 200);
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.kanban-card:hover {
+	background-color: rgb(230, 230, 230);	
+	box-shadow: 0px 1px 1px rgb(190, 190, 190);
+}
+
+.kanban-card.edit {
+
+	background-color: #FFF;	
+	padding: 1ch 1ch 0 1ch;
+}
+.kanban-card.edit:hover {
+	
+}
+.kanban-card.edit>textarea {
+	border: none;
+	width: 100%;
+	max-width: 100%;
+	min-width: 100%;
+	min-height: 2em;
+}
+
+.kanban-btn-add-column {
+	width: 20em;
+	border: none;
+	height: 2em;
+	cursor: pointer;
 }
