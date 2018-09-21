@@ -1,40 +1,20 @@
 import React, { Component } from 'react';
 import KanbanCard from './kanban-card';
+import { enterPressedHandler } from '../utils/key-pressed-handler';
 
 export default class KanbanColumn extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      editing: this.props.column.edit,
-      title: this.props.column.title
-    };
-  }
 
-  editTitle() {
-    this.setState({ editing: true });
-  }
-
-  titleChanged(event) {
-    this.setState({ title: event.target.value });
-  }
-
-  titleEdited(event) {
-    if (this.state.title.trim() === '') {
-      this.props.removeColumn(this.props.column.id);
-    }
-    this.setState({ editing: false });
-  }
-
-  keyPressed(event) {
-    if (event.key === 'Enter') {
-      this.titleEdited();
-    }
+  changeTitle() {
+    this.props.finishEditing('column', this.props.column.id, this.title.value);
   }
 
   render() {
-    const columnTitle = this.state.editing ?
-      <input type="text" value={this.state.title} autoFocus onChange={this.titleChanged.bind(this)} onBlur={this.titleEdited.bind(this)} onKeyPress={this.keyPressed.bind(this)} /> :
-      <span onClick={this.editTitle.bind(this)}>{this.state.title}</span>;
+    const { id, edit, title, cards } = this.props.column;
+    const { addCard, removeCard, startEditing } = this.props;
+    const keyPress = enterPressedHandler.bind(null, this.changeTitle.bind(this));
+    const columnTitle = edit ?
+      <input type="text" defaultValue={title} autoFocus onKeyPress={keyPress} onBlur={this.changeTitle.bind(this)} ref={(input) => this.title = input} /> :
+      <span onClick={startEditing.bind(null, 'column', id)}>{title}</span>;
 
     return (
       <div className="kanban-column">
@@ -42,11 +22,11 @@ export default class KanbanColumn extends Component {
           {columnTitle}
           <button className="kanban-btn-column-options">...</button></header>
         <div className="kanban-card-container">
-          {this.props.column.cards.map(card => {
-            return <KanbanCard key={card.id} card={card} removeCard={this.props.removeCard.bind(null, this.props.column.id)} />
+          {cards.map(card => {
+            return <KanbanCard key={card.id} card={card} removeCard={removeCard.bind(null, id)} />
           })}
         </div>
-        <button className="kanban-btn-add-card" onClick={this.props.addCard.bind(null, this.props.column.id)}>Add new card</button>
+        <button className="kanban-btn-add-card" onClick={addCard.bind(null, id)}>Add new card</button>
       </div>
     );
   }
