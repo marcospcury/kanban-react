@@ -18,6 +18,9 @@ export default class KanbanCard extends Component {
   }
 
   titleEdited(event) {
+    if (this.state.title.trim() === '') {
+      this.props.removeCard(this.props.card.id);
+    }
     this.setState({ editing: false });
   }
 

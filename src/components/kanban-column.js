@@ -19,6 +19,9 @@ export default class KanbanColumn extends Component {
   }
 
   titleEdited(event) {
+    if (this.state.title.trim() === '') {
+      this.props.removeColumn(this.props.column.id);
+    }
     this.setState({ editing: false });
   }
 
@@ -40,7 +43,7 @@ export default class KanbanColumn extends Component {
           <button className="kanban-btn-column-options">...</button></header>
         <div className="kanban-card-container">
           {this.props.column.cards.map(card => {
-            return <KanbanCard key={card.id} card={card} />
+            return <KanbanCard key={card.id} card={card} removeCard={this.props.removeCard.bind(null, this.props.column.id)} />
           })}
         </div>
         <button className="kanban-btn-add-card" onClick={this.props.addCard.bind(null, this.props.column.id)}>Add new card</button>
