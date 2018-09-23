@@ -1,46 +1,35 @@
 import React, { Component } from 'react';
+import { enterPressedHandler } from '../utils/key-pressed-handler';
 
 export default class KanbanCard extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      editing: this.props.card.edit,
-      title: this.props.card.title
-    };
+
+  changeTitle() {
+    this.props.finishEditing(this.props.card.id, this.title.value);
   }
 
-  editTitle() {
-    this.setState({ editing: true });
-  }
-
-  titleChanged(event) {
-    this.setState({ title: event.target.value });
-  }
-
-  titleEdited(event) {
-    if (this.state.title.trim() === '') {
-      this.props.removeCard(this.props.card.id);
-    }
-    this.setState({ editing: false });
-  }
-
-  keyPressed(event) {
-    if (event.key === 'Enter') {
-      this.titleEdited();
-    }
+  dragStart(event) {
+    this.props.dragStart(this.props.card.id, event);
   }
 
   render() {
+    const { id, title, edit } = this.props.card;
+    const { dragStart, startEditing } = this.props;
+    const keyPress = enterPressedHandler.bind(null, this.changeTitle.bind(this));
     let cardTitle;
-    if (this.state.editing) {
+    if (edit) {
       cardTitle = (<div className="kanban-card edit">
-        <textarea value={this.state.title} autoFocus onChange={this.titleChanged.bind(this)} onBlur={this.titleEdited.bind(this)} onKeyPress={this.keyPressed.bind(this)} />
+        <textarea
+          autoFocus
+          defaultValue={title}
+          onBlur={this.changeTitle.bind(this)}
+          onKeyPress={keyPress}
+          ref={(text) => this.title = text} />
       </div>);
     } else {
-      cardTitle = <div className="kanban-card" onClick={this.editTitle.bind(this)} draggable="true">{this.state.title}</div>
+      cardTitle = <div className="kanban-card" onClick={e => startEditing(id)} draggable="true">{title}</div>
     }
     return (
-      <div>
+      <div onDragStart={e => dragStart(id, e)}>
         {cardTitle}
       </div>
     );

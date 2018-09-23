@@ -2,22 +2,27 @@ import React, { Component } from 'react';
 import './App.css';
 import KanbanColumn from './components/kanban-column';
 import guid from './utils/guid';
-import { pipe } from './utils/operators';
 
 class App extends Component {
   constructor() {
     super();
     this.state = { columns: [] };
+    this.getObject = {
+      'column': (columns, id) => {
+        const column = columns.find(c => c.id === id);
+        return column;
+      },
+      'card': (columns, columnId, cardId) => {
+        const column = columns.find(c => c.id === columnId);
+        const card = column.cards.find(c => c.id === cardId);
+        return card;
+      }
+    };
   }
 
   getColumnsState() {
     const { columns } = this.state;
     return columns;
-  }
-
-  getColumn(id, columns) {
-    const column = columns.find(c => c.id === id);
-    return column;
   }
 
   setColumnsState(columns) {
@@ -34,38 +39,38 @@ class App extends Component {
   }
 
   addColumn() {
-    const columns = this.state.columns;
+    const columns = this.getColumnsState();
     columns.push({
       id: guid(),
       name: '',
       edit: true,
       cards: []
     });
-    this.setState({ columns });
+    this.setColumnsState(columns);
   }
 
   addCard(columnId) {
-    const { columns } = this.state;
-    const column = columns.find(c => c.id === columnId);
+    const columns = this.getColumnsState();
+    const column = this.getObject['column'](columns, columnId);
     column.cards.push({
       id: guid(),
       name: '',
       edit: true
     });
-    this.setState({ columns });
-  }
-
-  startEditing(object, id) {
-    const columns = this.getColumnsState();
-    const column = this.getColumn(id, columns);
-    this.setEdit(column);
     this.setColumnsState(columns);
   }
 
-  finishEditing(object, id, value) {
+  startEditing(objectType, columnId, cardId) {
     const columns = this.getColumnsState();
-    const column = this.getColumn(id, columns);
-    this.setTitle(value, column);
+    const object = this.getObject[objectType](columns, columnId, cardId);
+    this.setEdit(object);
+    this.setColumnsState(columns);
+  }
+
+  finishEditing(objectType, columnId, cardId, value) {
+    const columns = this.getColumnsState();
+    const object = this.getObject[objectType](columns, columnId, cardId);
+    this.setTitle(value, object);
     this.setColumnsState(columns);
   }
 
@@ -84,11 +89,49 @@ class App extends Component {
     this.setState({ columns });
   }
 
+  dragStart(columnId, cardId, event) {
+    event.dataTransfer.setData('column-origin', columnId);
+    event.dataTransfer.setData('card', cardId);
+  }
+
+  dragOver(event) {
+    event.preventDefault();
+  }
+
+  drop(destiny, event) {
+    const origin = event.dataTransfer.getData('column-origin');
+
+    if (origin !== destiny) {
+      const card = event.dataTransfer.getData('card');
+
+      const columns = this.getColumnsState();
+      const originColumn = this.getObject['column'](columns, origin);
+      const destinyColumn = this.getObject['column'](columns, destiny);
+
+      const cardObject = this.getObject['card'](columns, origin, card);
+      const cardIndex = originColumn.cards.findIndex(c => c.id === card);
+
+      originColumn.cards.splice(cardIndex, 1);
+      destinyColumn.cards.push(cardObject);
+      this.setColumnsState(columns);
+    }
+  }
+
   render() {
     return (
       <main>
         {this.state.columns.map(column => {
-          return <KanbanColumn key={column.id} column={column} addCard={this.addCard.bind(this)} removeCard={this.removeCard.bind(this)} removeColumn={this.removeColumn.bind(this)} startEditing={this.startEditing.bind(this)} finishEditing={this.finishEditing.bind(this)} />
+          return <KanbanColumn
+            key={column.id}
+            column={column}
+            addCard={this.addCard.bind(this)}
+            removeCard={this.removeCard.bind(this)}
+            removeColumn={this.removeColumn.bind(this)}
+            startEditing={this.startEditing.bind(this)}
+            finishEditing={this.finishEditing.bind(this)}
+            dragOver={this.dragOver.bind(this)}
+            dragStart={this.dragStart.bind(this)}
+            drop={this.drop.bind(this)} />
         })}
 
         <button className="kanban-btn-add-column" onClick={this.addColumn.bind(this)}>Add new column</button>
