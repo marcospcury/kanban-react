@@ -10,7 +10,7 @@ export default class KanbanColumn extends Component {
 
   render() {
     const { id, edit, title, cards } = this.props.column;
-    const { addCard, removeCard, startEditing, dragOver, drop, dragStart, finishEditing } = this.props;
+    const { addCard, removeCard, startEditing, dragOver, drop, dragStart, dragEnter, dragLeave, dragEnd, finishEditing } = this.props;
     const keyPress = enterPressedHandler.bind(null, this.changeTitle.bind(this));
     const columnTitle = edit ?
       <input type="text"
@@ -22,7 +22,7 @@ export default class KanbanColumn extends Component {
       <span onClick={startEditing.bind(null, 'column', id)}>{title}</span>;
 
     return (
-      <div className="kanban-column" onDragOver={e => dragOver(e)} onDrop={e => drop(id, e)}>
+      <div className="kanban-column" onDragOver={e => dragOver(e)} onDrop={e => drop(id, e)} onDragEnter={e => dragEnter(e)} onDragLeave={e => dragLeave(e)} onDragEnd={e => dragEnd(e)}>
         <header>
           {columnTitle}
           <button className="kanban-btn-column-options">...</button></header>

@@ -49,6 +49,10 @@ main {
 	width: 80%;
 }
 
+.kanban-column.over {
+  border: 2px dashed #777;
+}
+
 .kanban-column > header > span {
 	cursor: pointer;
 	padding: 0.5em;

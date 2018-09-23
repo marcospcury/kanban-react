@@ -95,10 +95,24 @@ class App extends Component {
   }
 
   dragOver(event) {
+    event.dataTransfer.dropEffect = 'move';
     event.preventDefault();
   }
 
+  dragEnter(e) {
+    e.target.classList.add('over');
+  }
+
+  dragLeave(e) {
+    e.target.classList.remove('over');
+  }
+
+  dragEnd(e) {
+    e.target.classList.remove('over');
+  }
+
   drop(destiny, event) {
+    event.target.classList.remove('over');
     const origin = event.dataTransfer.getData('column-origin');
 
     if (origin !== destiny) {
@@ -131,7 +145,10 @@ class App extends Component {
             finishEditing={this.finishEditing.bind(this)}
             dragOver={this.dragOver.bind(this)}
             dragStart={this.dragStart.bind(this)}
-            drop={this.drop.bind(this)} />
+            drop={this.drop.bind(this)}
+            dragEnter={this.dragEnter.bind(this)}
+            dragLeave={this.dragLeave.bind(this)}
+            dragEnd={this.dragEnd.bind(this)} />
         })}
 
         <button className="kanban-btn-add-column" onClick={this.addColumn.bind(this)}>Add new column</button>
