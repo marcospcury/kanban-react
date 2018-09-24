@@ -8,9 +8,26 @@ export default class KanbanColumn extends Component {
     this.props.finishEditing('column', this.props.column.id, null, this.title.value);
   }
 
+  dragOver(event) {
+    event.dataTransfer.dropEffect = 'move';
+    event.preventDefault();
+  }
+
+  dragEnter(event) {
+    event.target.classList.add('over');
+  }
+
+  dragLeave(event) {
+    event.target.classList.remove('over');
+  }
+
+  dragEnd(event) {
+    event.target.classList.remove('over');
+  }
+
   render() {
     const { id, edit, title, cards } = this.props.column;
-    const { addCard, removeCard, startEditing, dragOver, drop, dragStart, dragEnter, dragLeave, dragEnd, finishEditing } = this.props;
+    const { addCard, removeCard, startEditing, dropCard, dragStart, finishEditing } = this.props;
     const keyPress = enterPressedHandler.bind(null, this.changeTitle.bind(this));
     const columnTitle = edit ?
       <input type="text"
@@ -22,7 +39,12 @@ export default class KanbanColumn extends Component {
       <span onClick={startEditing.bind(null, 'column', id)}>{title}</span>;
 
     return (
-      <div className="kanban-column" onDragOver={e => dragOver(e)} onDrop={e => drop(id, e)} onDragEnter={e => dragEnter(e)} onDragLeave={e => dragLeave(e)} onDragEnd={e => dragEnd(e)}>
+      <div className="kanban-column"
+        onDragOver={e => this.dragOver(e)}
+        onDrop={e => dropCard(id, e)}
+        onDragEnter={e => this.dragEnter(e)}
+        onDragLeave={e => this.dragLeave(e)}
+        onDragEnd={e => this.dragEnd(e)}>
         <header>
           {columnTitle}
           <button className="kanban-btn-column-options">...</button></header>

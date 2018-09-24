@@ -79,14 +79,14 @@ class App extends Component {
     const column = columns.find(c => c.id === columnId);
     const cardIndex = column.cards.findIndex(c => c.id === cardId);
     column.cards.splice(cardIndex, 1);
-    this.setState({ columns });
+    this.setColumnsState(columns);
   }
 
   removeColumn(columnId) {
     const { columns } = this.state;
     const columnIndex = columns.findIndex(c => c.id === columnId);
     columns.splice(columnIndex, 1);
-    this.setState({ columns });
+    this.setColumnsState(columns);
   }
 
   dragStart(columnId, cardId, event) {
@@ -94,24 +94,7 @@ class App extends Component {
     event.dataTransfer.setData('card', cardId);
   }
 
-  dragOver(event) {
-    event.dataTransfer.dropEffect = 'move';
-    event.preventDefault();
-  }
-
-  dragEnter(e) {
-    e.target.classList.add('over');
-  }
-
-  dragLeave(e) {
-    e.target.classList.remove('over');
-  }
-
-  dragEnd(e) {
-    e.target.classList.remove('over');
-  }
-
-  drop(destiny, event) {
+  dropCard(destiny, event) {
     event.target.classList.remove('over');
     const origin = event.dataTransfer.getData('column-origin');
 
@@ -143,12 +126,8 @@ class App extends Component {
             removeColumn={this.removeColumn.bind(this)}
             startEditing={this.startEditing.bind(this)}
             finishEditing={this.finishEditing.bind(this)}
-            dragOver={this.dragOver.bind(this)}
             dragStart={this.dragStart.bind(this)}
-            drop={this.drop.bind(this)}
-            dragEnter={this.dragEnter.bind(this)}
-            dragLeave={this.dragLeave.bind(this)}
-            dragEnd={this.dragEnd.bind(this)} />
+            dropCard={this.dropCard.bind(this)} />
         })}
 
         <button className="kanban-btn-add-column" onClick={this.addColumn.bind(this)}>Add new column</button>
